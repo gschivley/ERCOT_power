@@ -81,6 +81,61 @@ class Clusters():
         self.labeled_plants.loc[:,'cluster'] = self.cluster_labels[k]
         
         return self.labeled_plants.loc[:,['year', 'plant_id', 'cluster']]
+        
+    def plot_clusters(self, k):
+        cluster_df = self.cluster_labels[k]
+        
+        path = '../Clean Data'
+        filename = 'ERCOT wind data.csv'
+        ercotPath = os.path.join(path, filename)
+        ercot = pd.read_csv(ercotPath, index_col=0)
+        
+        filename = 'EPA hourly dictionary.pgz'
+        epaPath = os.path.join(path, filename)
+        epaDict = self.load_zipped_pickle(epaPath)
+        
+        ercot.loc[:,'Net Load (MW)'] = ercot.loc[:,'ERCOT Load, MW'] - ercot.loc[:,'Total Wind Output, MW']
+        ercot.loc[1:,'Net Load Change (MW)'] = ercot.iloc[1:,-1].values - ercot.iloc[:-1,-1].values
+        ercot.loc[:,'DATETIME'] = pd.to_datetime(ercot.index)
+        
+        allEPA = pd.concat(epaDict)
+        allEPA.fillna(0, inplace=True)
+        allEPA = plant_gen_delta(allEPA)
+        allEPA.reset_index(drop=True, inplace=True)
+        
+        
+        merged_epa_cluster = pd.merge(allEPA, cluster_df, left_on=['PLANT_ID', 'YEAR'], 
+                             right_on=['plant_id', 'year'])
+        grouped_clusters = merged_epa_cluster.loc[:,['Gen Change (MW)', 'GROSS LOAD (MW)', 'DATETIME', 'cluster_id_6']].groupby(['DATETIME', 'cluster_id_6']).sum()
+        grouped_clusters.reset_index(inplace=True)
+        
+        grouped_clusters_ercot = pd.merge(grouped_clusters, ercot, on='DATETIME')
+        grouped_clusters_ercot.loc[:,'year'] = grouped_clusters_ercot.loc[:,'DATETIME'].apply(lambda x: x.year)
+        
+        filtered_data = grouped_clusters_ercot.loc[grouped_clusters_ercot['year'].isin([2007, 2011, 2015])]
+
+        plot = sns.lmplot('Net Load Change (MW)', 'Gen Change (MW)', data=filtered_data,
+                   col='year', row='cluster_id_6', hue='cluster_id_6', robust=True, ci=None)
+           
+        return plot
+        
+    def plant_gen_delta(self, df):
+    """
+    For every plant in the input df, calculate the change in gross load (MW)
+    from the previous hour.
+    
+    input:
+        df: dataframe of EPA clean air markets data
+    return:
+        df: concatanated list of dataframes
+    """
+        df_list = []
+        for plant in df['PLANT_ID'].unique():
+            temp = df.loc[df['PLANT_ID'] == plant,:]
+            gen_change = temp.loc[:,'GROSS LOAD (MW)'].values - temp.loc[:,'GROSS LOAD (MW)'].shift(1).values
+            temp.loc[:,'Gen Change (MW)'] = gen_change
+            df_list.append(temp)
+        return pd.concat(df_list)
             
 
             
