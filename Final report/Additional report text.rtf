@@ -4,7 +4,7 @@
 {\*\expandedcolortbl;\csgray\c100000;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
-\margl1440\margr1440\vieww15040\viewh11740\viewkind0
+\margl1440\margr1440\vieww18020\viewh15380\viewkind0
 \deftab720
 \pard\pardeftab720\ri0\partightenfactor0
 
@@ -15,6 +15,11 @@ This report describes the process and results of a data science project to predi
 \i0 ) and the hour directly preceding 
 \i t
 \i0 . We use the first set of data to group power plants into clusters, and the second set of data to predict the behavior of each cluster.\
+\
+
+\b Additional text about scoring and number of clusters
+\b0 \
+The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups.\
 \
 \
 Description of each column used in X:\
