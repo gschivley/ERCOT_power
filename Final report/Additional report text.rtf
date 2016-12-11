@@ -4,7 +4,7 @@
 {\*\expandedcolortbl;\csgray\c100000;\cssrgb\c11373\c12157\c13333;\cssrgb\c100000\c100000\c100000;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
-\margl1440\margr1440\vieww18020\viewh16760\viewkind0
+\margl1440\margr1440\vieww18020\viewh14580\viewkind0
 \deftab720
 \pard\pardeftab720\ri0\partightenfactor0
 
@@ -19,7 +19,7 @@ This report describes the process and results of a data science project to predi
 
 \b Additional text about scoring and number of clusters
 \b0 \
-The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups. Future work that focuses on predicting emissions from changes in generation might use a more specific loss function related to error or uncertainty in those predictions. \
+The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to meet changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups. Future work that focuses on predicting emissions from changes in generation might use a more specific loss function related to error or uncertainty in those predictions. \
 \
 
 \b Calculating hourly generation change
@@ -51,7 +51,15 @@ The validation score of 0.27 for this model and the scale of the residual errors
 
 \b LinearSVR
 \b0 \cf0 \cb1 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+This is a linear support vector regressor, which scales to large datasets better than a SVM with a radial basis function kernel. It still employs a regularization parameter (C), which we can vary using GridSearch. From the validation curve plot below, it is apparent that the model performs poorly with small values of C (large regularization). This makes sense, because with large regularization the model will always predict the average value of y. And an average prediction of y will result in a score of 0.\
 \
+The learning curve plot shows that, at least for the LinearSVR model, we get the best possible performance once 40-50% of the data is included in the model. The model does not improve beyond this point, plateauing at a score of ~0.18.\
+\
+\
+
+\b Gradient Boosting
+\b0 \
+Since none of the previous methods were able to able to predict the change in cluster generation with much accuracy, we move on to boosted gradient regression. The code below uses the XGBoost library, which is not included in the Anaconda python distribution. The results can be matched reasonably well with GradientBoostingRegressor from scikit-learn. We use XGBoost here because it is much faster and allows us to include validation and learning curves.\
 \
 Description of each column used in X:\
 \pard\pardeftab720\li770\fi-360\ri0\partightenfactor0
