@@ -19,7 +19,15 @@ This report describes the process and results of a data science project to predi
 
 \b Additional text about scoring and number of clusters
 \b0 \
-The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups.\
+The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups. Future work that focuses on predicting emissions from changes in generation might use a more specific loss function related to error or uncertainty in those predictions. \
+\
+
+\b Calculating hourly generation change
+\b0 \
+
+\i Rename this section? Maybe \'93Merge data for model\'94?\
+
+\i0 Now that we have imported/cleaned all of our data, put it on an hourly basis, selected an appropriate value of k for clustering power plants into groups, and labeled each plant, we can calculate the change in generation for each cluster. This historical change in generation will serve as the known y-vector for our model.\
 \
 \
 Description of each column used in X:\
