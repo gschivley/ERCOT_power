@@ -1,7 +1,9 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf600
 {\fonttbl\f0\fnil\fcharset0 Calibri;\f1\ftech\fcharset77 Symbol;}
-{\colortbl;\red255\green255\blue255;\red22\green23\blue26;\red255\green255\blue255;}
-{\*\expandedcolortbl;\csgray\c100000;\cssrgb\c11373\c12157\c13333;\cssrgb\c100000\c100000\c100000;}
+{\colortbl;\red255\green255\blue255;\red22\green23\blue26;\red255\green255\blue255;\red255\green255\blue255;
+}
+{\*\expandedcolortbl;\csgray\c100000;\cssrgb\c11373\c12157\c13333;\cssrgb\c100000\c100000\c100000;\csgray\c100000;
+}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
 \margl1440\margr1440\vieww18020\viewh14580\viewkind0
@@ -20,6 +22,8 @@ This report describes the process and results of a data science project to predi
 \b Additional text about scoring and number of clusters
 \b0 \
 The number of possible clusters can range from k=1 to k=n, where n is the number of power plants operating. The point of clustering power plants is to improve our ability to predict how a group of similar power plants will increase or decrease their generation in response to changes in grid conditions. This will be especially important when using the model to predict the behavior of power plants that have not yet been built. Reducing k improves our ability to predict changes in generation, but it reduces the usefulness of the model. When k=1, we can conclude (unhelpfully) that power plants will respond to meet changes in load. Ideally, we want to find a value of k that is small enough to improve predictions but large enough to differentiate power plants into helpful groups. Future work that focuses on predicting emissions from changes in generation might use a more specific loss function related to error or uncertainty in those predictions. \
+\
+In all of the cluster plots below, there is always one cluster that looks like it should have two independent regression lines (cluster 0 with k=6). This behavior is consistent even with k=10. Future work should be done to determine if these are separate plants, or plants that operate under two different modes. Either way, we expect that predictions of behavior for this group may suffer if our model doesn\'92t include the features that lead to this behavior. \
 \
 
 \b Calculating hourly generation change
@@ -42,7 +46,7 @@ The number of possible clusters can range from k=1 to k=n, where n is the number
 We start by fitting our data to a linear model that minimizes ordinary least squares loss. There are no hyperparameters to test on this type of model. According to the scikit-learn documentation:\
 \
 \'93\cf2 \cb3 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 The.. [score] \'85is defined as (1 - u/v), where u is the regression sum of squares ((y_true - y_pred) ** 2).sum() and v is the residual sum of squares ((y_true - y_true.mean()) ** 2).sum(). Best possible score is 1.0 and it can be negative (because the model can be arbitrarily worse). A constant model that always predicts the expected value of y, disregarding the input features, would get a R^2 score of 0.0.\'94\
+The.. [score] \'85is defined as (1 - u/v), where u is the regression sum of squares ((y_true - y_pred) ** 2).sum() and v is the residual sum of squares ((y_true - y_true.mean()) ** 2).sum(). Best possible score is 1.0 and it can be negative (because the model can be arbitrarily worse). A constant model that always predicts the expected value of y, disregarding the input features, would get a R^2 score of 0.0.\'94\
 \
 After fitting a model, it is helpful to plot the predicted residuals against the predicted values. The residuals should be randomly distributed around 0, with equal error in both directions. In this plot we see that the quality of the predictions varies by cluster. Cluster 4 is especially skewed, which is not surprising given the behavior seen in the plot of generation change vs load change in the {\field{\*\fldinst{HYPERLINK "#Clustering"}}{\fldrslt Clustering}} section. Some of the residual errors shown in this plot are large compared to the predicted values - they range from +/-1,000 MW change in generation over a single hour, when the predicted values are almost entirely in the range of +/-400 MW.\
 \
@@ -50,7 +54,7 @@ The validation score of 0.27 for this model and the scale of the residual errors
 \
 
 \b LinearSVR
-\b0 \cf0 \cb1 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+\b0 \cf0 \cb4 \kerning1\expnd0\expndtw0 \
 This is a linear support vector regressor, which scales to large datasets better than a SVM with a radial basis function kernel. It still employs a regularization parameter (C), which we can vary using GridSearch. From the validation curve plot below, it is apparent that the model performs poorly with small values of C (large regularization). This makes sense, because with large regularization the model will always predict the average value of y. And an average prediction of y will result in a score of 0.\
 \
 The learning curve plot shows that, at least for the LinearSVR model, we get the best possible performance once 40-50% of the data is included in the model. The model does not improve beyond this point, plateauing at a score of ~0.18.\
