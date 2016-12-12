@@ -1,6 +1,6 @@
 **GROUP MEMBERS**:
-nikhilba - Nikhil Agarwal
-gschivle - Greg Schivley
+nikhilba - Nikhil Agarwal  
+gschivle - Greg Schivley  
 Tim Tau - ttau
 
 **HOW TO RUN CODE**:
