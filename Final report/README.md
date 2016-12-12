@@ -11,7 +11,7 @@ Once the repository is cloned, the final report notebook is present in the `Fina
 Most libraries and functions used in the notebook should be included in the Anaconda distribution or are referenced from local scripts. The major exception is XGBoost, which is used to show learning and validation curves for the boosted gradient regression tree method. The model score and residual plot are included using `GradientBoostingRegressor` from scikit-learn.
 
 **nbviewer link**
-
+http://nbviewer.jupyter.org/github/gschivley/ERCOT_power/blob/master/Final%20report/Final%20Report.ipynb
 
 **Large files**
 The notebook imports over 1GB of data from a range of files. All data are available at the GitHub repository. The final report notebook has been written so that all data files are in the same folder as the notebook (https://github.com/gschivley/ERCOT_power/tree/master/Final%20report).
